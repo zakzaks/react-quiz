@@ -8,13 +8,14 @@ export default function Quiz() {
 	function handleAnswer(answer) {
 		setAnswers((prev) => [...prev, answer]);
 	}
+
 	return (
-		<div id="question">
+		<div id="quiz">
 			<h2>{QUESTIONS[activeQuestion].text}</h2>
 			<ul id="answers">
 				{QUESTIONS[activeQuestion].answers.map((answer, index) => (
 					<li key={index} className="answer">
-						<button>{answer}</button>
+						<button onClick={() => handleAnswer(answer)}>{answer}</button>
 					</li>
 				))}
 			</ul>
