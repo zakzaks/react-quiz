@@ -4,14 +4,28 @@ import quizCompleteEimg from "../assets/quiz-complete.png";
 import QuestionTimer from "./QuestionTimer.jsx";
 
 export default function Quiz() {
+	const [answerState, setAnswerState] = useState("");
 	const [answers, setAnswers] = useState([]);
 	const activeQuestion = answers.length;
 
-	const activeQuestionIndex = answers.length;
+	const activeQuestionIndex =
+		answerState === "" ? answers.length : answers.length - 1;
 	const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
 	const handleAnswer = useCallback(function handleAnswer(answer) {
+		setAnswerState("answered");
 		setAnswers((prev) => [...prev, answer]);
+
+		setTimeout(() => {
+			if (answer === QUESTIONS[activeQuestionIndex].answers[0]) {
+				setAnswerState("correct");
+			} else {
+				setAnswerState("wrong");
+			}
+			setTimeout(() => {
+				setAnswerState("");
+			}, 2000);
+		}, 1000);
 	}, []);
 
 	const handleSkipAnswer = useCallback(
@@ -41,11 +55,32 @@ export default function Quiz() {
 				/>
 				<h2>{QUESTIONS[activeQuestion].text}</h2>
 				<ul id="answers">
-					{shuffledAnswers.map((answer, index) => (
-						<li key={index} className="answer">
-							<button onClick={() => handleAnswer(answer)}>{answer}</button>
-						</li>
-					))}
+					{shuffledAnswers.map((answer, index) => {
+						const isSelected = answer[answer.length - 1] === answer;
+						let cssClases = "";
+
+						if (answerState === "answered" && isSelected) {
+							cssClases = "selected";
+						}
+
+						if (
+							answerState === "correct" ||
+							answerState === "wrong" ||
+							isSelected
+						) {
+							cssClases = answerState;
+						}
+						return (
+							<li key={index} className="answer">
+								<button
+									onClick={() => handleAnswer(answer)}
+									className={cssClases}
+								>
+									{answer}
+								</button>
+							</li>
+						);
+					})}
 				</ul>
 				<p>Currently active Question: {activeQuestion}</p>
 			</div>
