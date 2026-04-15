@@ -5,27 +5,13 @@ import Question from "./Question.jsx";
 import QUESTIONS from "../data/questions.js";
 
 export default function Quiz() {
-	const [answerState, setAnswerState] = useState("");
 	const [answers, setAnswers] = useState([]);
 
-	const activeQuestionIndex =
-		answerState === "" ? answers.length : answers.length - 1;
+	const activeQuestionIndex = answers.length;
 	const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
 	const handleAnswer = useCallback(function handleAnswer(answer) {
-		setAnswerState("answered");
 		setAnswers((prev) => [...prev, answer]);
-
-		setTimeout(() => {
-			if (answer === QUESTIONS[activeQuestionIndex].answers[0]) {
-				setAnswerState("correct");
-			} else {
-				setAnswerState("wrong");
-			}
-			setTimeout(() => {
-				setAnswerState("");
-			}, 2000);
-		}, 1000);
 	}, []);
 
 	const handleSkipAnswer = useCallback(
@@ -46,10 +32,7 @@ export default function Quiz() {
 		<div id="quiz">
 			<Question
 				key={activeQuestionIndex}
-				questionText={QUESTIONS[activeQuestionIndex].text}
-				answers={QUESTIONS[activeQuestionIndex].answers}
-				selectedAnswer={answers[answers.length - 1]}
-				answerState={answerState}
+				questionIndex={activeQuestionIndex}
 				onSelectAnswer={handleAnswer}
 				onSkipAnswer={handleSkipAnswer}
 			/>
