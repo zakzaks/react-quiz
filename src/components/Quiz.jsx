@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
-import QUESTIONS from "../data/questions.js";
 import quizCompleteEimg from "../assets/quiz-complete.png";
-import QuestionTimer from "./QuestionTimer.jsx";
+import Question from "./Question.jsx";
+
+import QUESTIONS from "../data/questions.js";
 
 export default function Quiz() {
 	const [answerState, setAnswerState] = useState("");
 	const [answers, setAnswers] = useState([]);
-	const activeQuestion = answers.length;
 
 	const activeQuestionIndex =
 		answerState === "" ? answers.length : answers.length - 1;
@@ -42,48 +42,17 @@ export default function Quiz() {
 		);
 	}
 
-	const shuffledAnswers = [...QUESTIONS[activeQuestionIndex].answers];
-	shuffledAnswers.sort(() => Math.random() - 0.5);
-
 	return (
 		<div id="quiz">
-			<div className="question">
-				<QuestionTimer
-					key={activeQuestionIndex}
-					timeout={10000}
-					onTimeout={handleSkipAnswer}
-				/>
-				<h2>{QUESTIONS[activeQuestion].text}</h2>
-				<ul id="answers">
-					{shuffledAnswers.map((answer, index) => {
-						const isSelected = answer[answer.length - 1] === answer;
-						let cssClases = "";
-
-						if (answerState === "answered" && isSelected) {
-							cssClases = "selected";
-						}
-
-						if (
-							answerState === "correct" ||
-							answerState === "wrong" ||
-							isSelected
-						) {
-							cssClases = answerState;
-						}
-						return (
-							<li key={index} className="answer">
-								<button
-									onClick={() => handleAnswer(answer)}
-									className={cssClases}
-								>
-									{answer}
-								</button>
-							</li>
-						);
-					})}
-				</ul>
-				<p>Currently active Question: {activeQuestion}</p>
-			</div>
+			<Question
+				key={activeQuestionIndex}
+				questionText={QUESTIONS[activeQuestionIndex].text}
+				answers={QUESTIONS[activeQuestionIndex].answers}
+				selectedAnswer={answers[answers.length - 1]}
+				answerState={answerState}
+				onSelectAnswer={handleAnswer}
+				onSkipAnswer={handleSkipAnswer}
+			/>
 		</div>
 	);
 }
